@@ -123,7 +123,7 @@ Improvements
 -----
 A lot of enhancement can be done on this library.
 Right now I am planning to add as soon as possible:
-- Adding new options to getListContents function
+- Adding new options to getFolderList method
 - File Creation
 - Upload Data operation to created file
 - Download file operation
