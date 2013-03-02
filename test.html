@@ -1,0 +1,86 @@
+<html>
+<head>
+	<title>jQuery SugarSync</title>
+	<link href="./css/test.css" rel="stylesheet" type="text/css">
+	<script src="./libs/jquery-1.9.1.js" type="text/javascript"></script>
+	<script src="./jquery.sugarsync.js" type="text/javascript"></script>
+	<script>
+		var _sMagicBriefcaseResource=null;
+		$(document).ready(function(){
+			$('#getUserInfo').click(function(){
+				$(document).sugarsync({
+					username: $('#username').val(),
+					password: $('#pwd').val()
+				}).sugarsync('getUserInfo',function(oResult){
+					var _sHtml='';
+					for(var i in oResult)_sHtml+='<b>'+i+':</b> '+oResult[i]+'<br>';
+					$('#getUserInfo_result').html(_sHtml);
+					$('#getFolderInfo').attr('disabled',null);
+					$('#getFolderContents').attr('disabled',null);
+					_sMagicBriefcaseResource=oResult.magicBriefcase;
+				});
+			});
+			
+			$('#getFolderInfo').click(function(){
+				$(document).sugarsync({
+					username: $('#username').val(),
+					password: $('#pwd').val()
+				}).sugarsync('getFolderInfo',_sMagicBriefcaseResource,function(oResult){
+					var _sHtml='';
+					for(var i in oResult)_sHtml+='<b>'+i+':</b> '+oResult[i]+'<br>';
+					$('#getFolder_result').html(_sHtml);
+				});
+			});
+			
+			$('#getFolderContents').click(function(){
+				$(document).sugarsync({
+					username: $('#username').val(),
+					password: $('#pwd').val()
+				}).sugarsync('getFolderContents',_sMagicBriefcaseResource,fillFolderContentsResult);
+			});
+		});
+		
+		function fillFolderContentsResult(oResult){
+			var _sHtml='';
+			for(var i in oResult.dirList){
+				var _oDirElement=oResult.dirList[i];
+				_sHtml+='<li class="folder" onClick="$(document).sugarsync(\'getFolderContents\',\'' + _oDirElement.ref + '\',fillFolderContentsResult)" ><b>'+_oDirElement.displayName+'</b></li>';
+			}
+			for(var j in oResult.fileList){
+				var _oFileElement=oResult.fileList[j];
+				_sHtml+='<li class="file" >'+_oFileElement.displayName+'</li>';
+				//_sHtml+='<li class="file" onClick="if(confirm(\'Start Download?\'))$(document).sugarsync(\'download\',\'' + _oFileElement.fileData + '\')" >'+_oFileElement.displayName+'</li>';
+			}
+			$('#getFolder_result').html('<ul>' + _sHtml + '</ul>');
+		}
+	</script>
+</head>
+<body>
+	<table>
+		<tr>
+			<td id="title" >jQuery SugarSync v0.0.1</td>
+		</tr>
+		<tr>
+			<td>
+				<div><label>USERNAME:</label><input type="text" id="username" value="" ></input></div>
+				<div><label>PASSWORD:</label><input type="password" id="pwd" value="" ></input></div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="div-title" >get User Info</div>
+				<div id="getUserInfo_result" class="div-result" ></div>
+				<input type="button" id="getUserInfo" class="input-button" value="getUserInfo"></input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="div-title" >getFolder Info or Contents</div>
+				<div id="getFolder_result" class="div-result" ></div>
+				<input type="button" id="getFolderInfo" class="input-button" value="getFolderInfo (magic briefcase)" disabled></input>
+				<input type="button" id="getFolderContents" class="input-button" value="getFolderContents (magic briefcase)" disabled></input>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
