@@ -40,30 +40,34 @@
 			});
 		});
 		
-		function fillFolderContentsResult(oResult){
-			var _sHtml='';
-			for(var i in oResult.dirList){
-				var _oDirElement=oResult.dirList[i];
-				_sHtml+='<li class="folder" onClick="$(document).sugarsync(\'getFolderContents\',\'' + _oDirElement.ref + '\',fillFolderContentsResult)" ><b>'+_oDirElement.displayName+'</b></li>';
+		function fillFolderContentsResult(aResult){
+			var _aHtml=[];
+			for(var i in aResult){
+				var _oElement=aResult[i];
+				switch( _oElement.type ){
+					case 'folder':
+						_aHtml.push('<li class="folder" onClick="$(document).sugarsync(\'getFolderContents\',\'' + _oElement.ref + '\',fillFolderContentsResult)" ><b>'+_oElement.displayName+'</b></li>');
+					break;
+					case 'file':
+						_aHtml.push('<li class="file" ><label class="name" >'+_oElement.displayName+'</label><label class="size" >'+_oElement.size+' bytes</label><label class="last-modified" >Last modified: '+_oElement.lastModified+'</label><label class="media-type" >'+_oElement.mediaType+'</label></li>');
+						//'<li class="file" onClick="if(confirm(\'Start Download?\'))$(document).sugarsync(\'download\',\'' + _oElement.fileData + '\')" >'+_oElement.displayName+'</li>'
+					default:
+					break;
+				}
 			}
-			for(var j in oResult.fileList){
-				var _oFileElement=oResult.fileList[j];
-				_sHtml+='<li class="file" >'+_oFileElement.displayName+'</li>';
-				//_sHtml+='<li class="file" onClick="if(confirm(\'Start Download?\'))$(document).sugarsync(\'download\',\'' + _oFileElement.fileData + '\')" >'+_oFileElement.displayName+'</li>';
-			}
-			$('#getFolder_result').html('<ul>' + _sHtml + '</ul>');
+			$('#getFolder_result').html('<ul>' + _aHtml.join('') + '</ul>');
 		}
 	</script>
 </head>
 <body>
 	<table>
 		<tr>
-			<td id="title" >jQuery SugarSync v0.0.1</td>
+			<td id="title" >jQuery <a href="https://www.sugarsync.com/" >SugarSync</a> v0.0.2</td>
 		</tr>
 		<tr>
 			<td>
-				<div><label>USERNAME:</label><input type="text" id="username" value="" ></input></div>
-				<div><label>PASSWORD:</label><input type="password" id="pwd" value="" ></input></div>
+				<div><label>USERNAME:</label><input type="text" id="username" ></input></div>
+				<div><label>PASSWORD:</label><input type="password" id="pwd" ></input></div>
 			</td>
 		</tr>
 		<tr>

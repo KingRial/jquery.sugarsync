@@ -9,10 +9,38 @@
 .div-result{
 	width:600px;
 	height:300px;
-	border:1px red dotted;
+	border-radius: 15px;
+	border:1px black solid;
 	float:left;
 }
 
 .input-button{
 	float:left;
+}
+
+.file {
+	position: relative;
+	height: 35px;
+}
+.file .name{
+	position: absolute;
+	left: 5px
+}
+.file .size{
+	position: absolute;
+	top: 15px;
+	left: 5px;
+	bottom: 5px;
+	font-size: 10px;
+}
+.file .last-modified{
+	position: absolute;
+	right: 5px;
+	font-size: 10px;
+}
+.file .media-type{
+	position: absolute;
+	right: 5px;
+	bottom: 0px;
+	font-size: 10px;
 }
