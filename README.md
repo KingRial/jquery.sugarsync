@@ -100,8 +100,8 @@ $(selector).sugarsync('getFolderContents', sFolderResource, fCallback, oOptions)
 + `sFolderResource`
     The string describing a folder resource
 + `fCallback`
-    The callback function receiving a JavaScript object describing the folder contents as first parameter described by an array. Each element of the array is an object. The type property will determine if it's a directory or a file.
-	* element `directory`
+    The callback function receiving a JavaScript array describing the folder contents as first parameter. Each element of the array is a JavaScript object. The type property will determine if it's a directory or a file.
+	* element `folder`
 		- An array of directories inside the resource; each element of the array is a JavaScript object with the following parameters:
 			- `type` constant string 'folder'
 			- `displayName` the label
