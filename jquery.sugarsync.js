@@ -1,5 +1,5 @@
 /*!
- * jQuery SugarSync 0.0.1
+ * jQuery SugarSync 0.0.3
  * http://
  * https://www.sugarsync.com/
  * https://www.sugarsync.com/developer
@@ -15,19 +15,19 @@
  */
  
 (function( $ ){
-	var _XMLparser=function(xml){
-		var tmp=xml;
+	var _XMLparser = function(xml){
+		var tmp = xml;
 		return new function(tmp){
 			try{
-				this._oXml=$((typeof xml=='string' && $.isXMLDoc(xml)?$.parseXML(xml):xml));
+				this._oXml = $( ( typeof xml=='string' && $.isXMLDoc( xml ) ? $.parseXML(xml) : xml ) );
 			}catch(e){
-				this._oXml=null;
+				this._oXml = null;
 			}
 			this.get=function(value,bUseLeafs){
-				var result=null;
+				var result = null;
 				if( this._oXml ){
-					var _aItem=this._oXml.find(value);
-					var _aItemChildren=_aItem.children();
+					var _aItem = this._oXml.find(value);
+					var _aItemChildren = _aItem.children();
 					result=[];
 					if( _aItem.length > 1 ){
 						for( var i=0;i<_aItem.length;i++){
@@ -48,7 +48,7 @@
 						result = _aItem.text();
 					}
 				}
-				return ((isNaN(result)||result=='')?result:parseFloat(result));
+				return ( ( isNaN( result ) || result=='' ) ? result : parseFloat( result ) );
 			}
 		}
 	}
@@ -183,25 +183,25 @@
 			}
 		},
 		_getUserInfoRequestSuccess : function(fCallback, data, textStatus, jqXHR){
-			var _oXMLresponse=_XMLparser(data);
-			var _oResponse={
-				username:_oXMLresponse.get('username'),
-				nickname:_oXMLresponse.get('nickname'),
-				quota:{
-					limit:_oXMLresponse.get('quota limit'),
-					usage:_oXMLresponse.get('quota usage'),
+			var _oXMLresponse = _XMLparser(data);
+			var _oResponse = {
+				username: _oXMLresponse.get('username'),
+				nickname: _oXMLresponse.get('nickname'),
+				quota: {
+					limit: _oXMLresponse.get('quota limit'),
+					usage: _oXMLresponse.get('quota usage'),
 				},
-				workspaces:_oXMLresponse.get('workspaces'),
-				syncfolders:_oXMLresponse.get('syncfolders'),
-				deleted:_oXMLresponse.get('deleted'),
-				magicBriefcase:_oXMLresponse.get('magicBriefcase'),
-				webArchive:_oXMLresponse.get('webArchive'),
-				mobilePhotos:_oXMLresponse.get('mobilePhotos'),
-				albums:_oXMLresponse.get('albums'),
-				recentActivities:_oXMLresponse.get('recentActivities'),
-				receivedShares:_oXMLresponse.get('receivedShares'),
-				publicLinks:_oXMLresponse.get('publicLinks'),
-				maximumPublicLinkSize:_oXMLresponse.get('maximumPublicLinkSize')
+				workspaces: _oXMLresponse.get('workspaces'),
+				syncfolders: _oXMLresponse.get('syncfolders'),
+				deleted: _oXMLresponse.get('deleted'),
+				magicBriefcase: _oXMLresponse.get('magicBriefcase'),
+				webArchive: _oXMLresponse.get('webArchive'),
+				mobilePhotos: _oXMLresponse.get('mobilePhotos'),
+				albums: _oXMLresponse.get('albums'),
+				recentActivities: _oXMLresponse.get('recentActivities'),
+				receivedShares: _oXMLresponse.get('receivedShares'),
+				publicLinks: _oXMLresponse.get('publicLinks'),
+				maximumPublicLinkSize: _oXMLresponse.get('maximumPublicLinkSize')
 			};
 			if( fCallback ){
 				fCallback(_oResponse);
@@ -234,7 +234,7 @@
 	//Get Folder Contents
 		getFolderContents : function(sFolderResource,fCallback,oOptions){
 			var _oSettings = $.extend({
-				_sMethodType:'contents',
+				_sMethodType: 'contents',
 				type: null,
 				start: 0,
 				max: 500,
@@ -269,15 +269,19 @@
 			})
 		},
 		_getFolderRequest : function(sFolderResource,fCallback,oOptions){
-			if(!oOptions)oOptions={};
-			if(!oOptions._sMethodType)oOptions._sMethodType='info';//info or content
+			if( !oOptions ){
+				oOptions = {};
+			}
+			if( !oOptions._sMethodType ){
+				oOptions._sMethodType = 'info';//info or content ( by default it's set to info )
+			}
 			var $this = $(this),
 				_oSettings = $this.data('_sugarsync');
 			if( _oSettings.userResource ){
 				var _sXml = '<?xml version="1.0" encoding="UTF-8"?>';
 				var _sUrl=sFolderResource;
 				var _oData=null;
-				switch(oOptions._sMethodType){
+				switch( oOptions._sMethodType ){
 					case 'contents':
 						_sUrl += '/contents';
 						_oData={};
@@ -315,41 +319,41 @@
 			}
 		},
 		_getFolderRequestSuccess : function(oOptions,fCallback, data, textStatus, jqXHR){
-			var _oXMLresponse=_XMLparser(data);
-			var _oResponse={};
+			var _oXMLresponse = _XMLparser(data);
+			var _oResponse = {};
 			//Type: info
-			switch(oOptions._sMethodType){
+			switch( oOptions._sMethodType ){
 				case 'info':
-					_oResponse={
-						displayName:_oXMLresponse.get('displayName'),
-						dsid:_oXMLresponse.get('dsid'),
-						timeCreated:_oXMLresponse.get('timeCreated'),
-						collections:_oXMLresponse.get('collections'),
-						files:_oXMLresponse.get('files'),
-						contents:_oXMLresponse.get('contents')
+					_oResponse = {
+						displayName: _oXMLresponse.get('displayName'),
+						dsid: _oXMLresponse.get('dsid'),
+						timeCreated: _oXMLresponse.get('timeCreated'),
+						collections: _oXMLresponse.get('collections'),
+						files: _oXMLresponse.get('files'),
+						contents: _oXMLresponse.get('contents')
 					};
 				break;
 				case 'contents':
 				default:
 					var _aDirList = _oXMLresponse.get('collection');
 					if( !_aDirList ){
-						_aDirList=[];
+						_aDirList = [];
 					}
 					//Adding type directory
 					for( var _iIndex in _aDirList){
-						var _oElement=_aDirList[_iIndex];
-						_oElement.type='folder';
+						var _oElement = _aDirList[_iIndex];
+						_oElement.type = 'folder';
 					}
 					var _aFileList = _oXMLresponse.get('file');
 					if( !_aFileList ){
-						_aFileList=[];
+						_aFileList = [];
 					}
 					//Adding type file
 					for( var _iIndex in _aFileList){
-						var _oElement=_aFileList[_iIndex];
-						_oElement.type='file';
+						var _oElement = _aFileList[_iIndex];
+						_oElement.type = 'file';
 					}
-					_oResponse=_aDirList.concat(_aFileList);
+					_oResponse = _aDirList.concat(_aFileList);
 				break;
 			}
 			if( fCallback ){
@@ -362,29 +366,35 @@
 				fCallback();
 			}
 		},
-	//download (Needs server side help to download a file)
-/*
-		download : function(sFileResource,fCallback,oOptions){
+	//Download
+		download : function(sFileResource,sDisplayName,sMediatype,fCallback,oOptions){
 			return this.each(function(){
 				var $this = $(this);
 				$this.sugarsync('requestRefreshToken',
 					$.proxy($this.sugarsync,$this,'requestAccessToken',
 						$.proxy($this.sugarsync,$this,'_downloadRequest',
 							sFileResource,
-							fCallback
+							sDisplayName,
+							sMediatype,
+							fCallback,
+							oOptions
 						)
 					)
 				);
 			})
 		},
-		_downloadRequest : function(sFileResource,fCallback,oOptions){
-			if(!oOptions)oOptions={};
-			if(!oOptions.type)oOptions.type='info';//info or content
+		_downloadRequest : function(sFileResource,sDisplayName,sMediatype,fCallback,oOptions){
+			if( !oOptions ){
+				oOptions = {};
+			}
+			if( !oOptions.type ){
+				oOptions.type = 'info';//info or content
+			}
 			var $this = $(this),
 				_oSettings = $this.data('_sugarsync');
 			if( _oSettings.userResource ){
 				var _sXml = '<?xml version="1.0" encoding="UTF-8"?>';
-				var _sUrl=sFileResource;
+				var _sUrl = sFileResource;
 				$.ajax({
 					url: _sUrl,
 					type: 'GET',
@@ -393,26 +403,97 @@
 					},
 					processData: false,
 					contentType: 'application/xml; charset=UTF-8',
-					success:$.proxy($this.sugarsync,$this,'_downloadRequestSuccess',oOptions,fCallback),
-					error:$.proxy($this.sugarsync,$this,'_downloadRequestError',oOptions,fCallback)
+					datatype: 'String',
+					success: $.proxy($this.sugarsync,$this,'_downloadRequestSuccess',sDisplayName,sMediatype,oOptions,fCallback),
+					error: $.proxy($this.sugarsync,$this,'_downloadRequestError',sDisplayName,sMediatype,oOptions,fCallback)
 				});
 			} else if( fCallback ){
 				$.error( 'Cannot find a user resource; something went wrong.' );
 				fCallback();
 			}
 		},
-		_downloadRequestSuccess : function(oOptions,fCallback, data, textStatus, jqXHR){
+		_downloadRequestSuccess : function(sDisplayName, sMediatype, oOptions, fCallback, data, textStatus, jqXHR){
+			var buf = new ArrayBuffer(data.length*2); // 2 bytes for each char
+			var bufView = new Uint16Array(buf);
+			for (var i=0, strLen=data.length; i<strLen; i++) {
+				bufView[i] = data.charCodeAt(i);
+			}
+			
+			var _oBlob = new Blob([bufView], {'type': sMediatype});
+			var _oLink = document.createElement('a');
+			_oLink.href = window.URL.createObjectURL( _oBlob );
+			_oLink.download = sDisplayName;
+			_oLink.click();
+			if( fCallback ){
+				fCallback({
+					displayName: sDisplayName,
+					mediaType: sMediatype
+				});
+			}
+		},
+		_downloadRequestError : function(sDisplayName, sMediatype, oOptions,fCallback, jqXHR, textStatus, errorThrown){
+			$.error( 'Unable to DOWNLOAD file: ' + textStatus + ' - ' + errorThrown);
 			if( fCallback ){
 				fCallback();
 			}
 		},
-		_downloadRequestError : function(oOptions,fCallback, jqXHR, textStatus, errorThrown){
-			$.error( 'Unable to DOWNLOAD file: '+textStatus+' - '+errorThrown);
+	//Create: https://www.sugarsync.com/dev/create-file-example.html
+	//Upload: https://www.sugarsync.com/dev/upload-file-data-example.html
+	//Retrieving version history
+		getVersionHistory : function(sFileResource,fCallback,oOptions){
+			return this.each(function(){
+				var $this = $(this);
+				$this.sugarsync('requestRefreshToken',
+					$.proxy($this.sugarsync,$this,'requestAccessToken',
+						$.proxy($this.sugarsync,$this,'_getVersionHistoryRequest',
+							sFileResource,
+							fCallback
+						)
+					)
+				);
+			})
+		},
+		_getVersionHistoryRequest : function(sFileResource,fCallback,oOptions){
+			oOptions = $.extend({},oOptions);
+			var $this = $(this),
+				_oSettings = $this.data('_sugarsync');
+			if( _oSettings.userResource ){
+				var _sXml = '<?xml version="1.0" encoding="UTF-8"?>';
+				var _sUrl = sFileResource + '/version';
+				$.ajax({
+					url: _sUrl,
+					type: 'GET',
+					headers:{
+						Authorization:_oSettings.accessToken
+					},
+					processData: false,
+					contentType: 'application/xml; charset=UTF-8',
+					datatype: 'String',
+					success: $.proxy($this.sugarsync,$this,'_getVersionHistoryRequestSuccess',oOptions,fCallback),
+					error: $.proxy($this.sugarsync,$this,'_getVersionHistoryRequestError',oOptions,fCallback)
+				});
+			} else if( fCallback ){
+				$.error( 'Cannot find a user resource; something went wrong.' );
+				fCallback();
+			}
+		},
+		_getVersionHistoryRequestSuccess : function( oOptions, fCallback, data, textStatus, jqXHR){
+			var _oXMLresponse = _XMLparser(data);
+			var _aResult = [];
+			var _aVersions = _oXMLresponse.get('fileVersion');
+			for(var _iIndex in _aVersions){
+				_aResult.push( _aVersions[_iIndex] );
+			}
+			if( fCallback ){
+				fCallback( _aResult );
+			}
+		},
+		_getVersionHistoryRequestError : function( oOptions,fCallback, jqXHR, textStatus, errorThrown){
+			$.error( 'Unable to get file version history: ' + textStatus + ' - ' + errorThrown);
 			if( fCallback ){
 				fCallback();
 			}
 		},
-*/
 	//Destroy
 		destroy : function( ){
 			return this.each(function(){

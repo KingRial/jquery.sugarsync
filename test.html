@@ -2,12 +2,22 @@
 <head>
 	<title>jQuery SugarSync</title>
 	<link href="./css/test.css" rel="stylesheet" type="text/css">
-	<script src="./libs/jquery-1.9.1.js" type="text/javascript"></script>
+	<script src="./libs/jquery-2.0.0.js" type="text/javascript"></script>
 	<script src="./jquery.sugarsync.js" type="text/javascript"></script>
 	<script>
-		var _sMagicBriefcaseResource=null;
+		var _sMagicBriefcaseResource = null;
 		$(document).ready(function(){
-			$('#getUserInfo').click(function(){
+			$('div#getUserInfo').click(function(){
+				var _jThis = $(this);
+				if( _jThis.css('top') == '0px' && _jThis.css('right') == '0px') {
+					_jThis.animate({top:'-300px',right:'-470px'});
+				} else {
+					_jThis.animate({top:'0px',right:'0px'});
+				}
+			});
+			
+			
+			$('input#getUserInfo').click(function(){
 				$(document).sugarsync({
 					username: $('#username').val(),
 					password: $('#pwd').val()
@@ -17,11 +27,13 @@
 					$('#getUserInfo_result').html(_sHtml);
 					$('#getFolderInfo').attr('disabled',null);
 					$('#getFolderContents').attr('disabled',null);
-					_sMagicBriefcaseResource=oResult.magicBriefcase;
+					$('#createFile').attr('disabled',null);
+					_sMagicBriefcaseResource = oResult.magicBriefcase;
+					$('div#getUserInfo').show();
 				});
 			});
 			
-			$('#getFolderInfo').click(function(){
+			$('input#getFolderInfo').click(function(){
 				$(document).sugarsync({
 					username: $('#username').val(),
 					password: $('#pwd').val()
@@ -32,11 +44,13 @@
 				});
 			});
 			
-			$('#getFolderContents').click(function(){
+			$('input#getFolderContents').click(function(){
 				$(document).sugarsync({
 					username: $('#username').val(),
 					password: $('#pwd').val()
-				}).sugarsync('getFolderContents',_sMagicBriefcaseResource,fillFolderContentsResult);
+				}).sugarsync('getFolderContents',_sMagicBriefcaseResource,fillFolderContentsResult,{
+					max: 8
+				});
 			});
 		});
 		
@@ -46,45 +60,60 @@
 				var _oElement=aResult[i];
 				switch( _oElement.type ){
 					case 'folder':
-						_aHtml.push('<li class="folder" onClick="$(document).sugarsync(\'getFolderContents\',\'' + _oElement.ref + '\',fillFolderContentsResult)" ><b>'+_oElement.displayName+'</b></li>');
+						_aHtml.push('<li class="folder" onClick="$(document).sugarsync(\'getFolderContents\',\'' + _oElement.ref + '\',fillFolderContentsResult,{max:8});" ><b>'+_oElement.displayName+'</b></li>');
 					break;
 					case 'file':
-						_aHtml.push('<li class="file" ><label class="name" >'+_oElement.displayName+'</label><label class="size" >'+_oElement.size+' bytes</label><label class="last-modified" >Last modified: '+_oElement.lastModified+'</label><label class="media-type" >'+_oElement.mediaType+'</label></li>');
-						//'<li class="file" onClick="if(confirm(\'Start Download?\'))$(document).sugarsync(\'download\',\'' + _oElement.fileData + '\')" >'+_oElement.displayName+'</li>'
+						_aHtml.push('<li class="file" ><label class="name" >' + _oElement.displayName + '</label><label class="size" >' + _oElement.size + ' bytes</label><label class="last-modified" >Last modified: '+_oElement.lastModified+'</label><label class="media-type" >'+_oElement.mediaType+'</label><button id="download" onclick="if(confirm(\'Start Download?\'))$(document).sugarsync(\'download\',\'' + _oElement.fileData + '\',\'' + _oElement.displayName + '\',\'' + _oElement.mediaType + '\');">Download</button><button id="version" onclick="$(document).sugarsync(\'getVersionHistory\',\'' + _oElement.ref + '\',$.proxy(fillFileVersionResult,this,\'' + _oElement.displayName + '\'));">Versions</button></li>');
 					default:
 					break;
 				}
 			}
 			$('#getFolder_result').html('<ul>' + _aHtml.join('') + '</ul>');
 		}
+		
+		function fillFileVersionResult(sDisplayName, aResult){
+			var _aHtml=[];
+			for(var _iIndex in aResult){
+				var _oElement = aResult[_iIndex];
+				_aHtml.push('<li class="file" ><label class="name" >Version: ' + ( aResult.length - _iIndex ) + '</label><label class="size" >' + _oElement.size + ' bytes</label><label class="last-modified" >Last modified: ' + _oElement.lastModified + '</label><label class="media-type" >' + _oElement.mediaType + '</label><button id="download" onclick="if(confirm(\'Start Download?\'))$(document).sugarsync(\'download\',\'' + _oElement.fileData + '\',\'' + sDisplayName + '\',\'' + _oElement.mediaType + '\');">Download</button></li>');
+			}
+			$('div#getFileVersionInfo').find('div.div-title').html('File Versions: "' + sDisplayName + '"')
+			$('#getFileVersion_result').html('<ul>' + _aHtml.join('') + '</ul>');
+			$('div.getFileVersionInfo-container').show();
+		}
 	</script>
 </head>
 <body>
-	<table>
-		<tr>
-			<td id="title" >jQuery <a href="https://www.sugarsync.com/" >SugarSync</a> v0.0.2</td>
-		</tr>
-		<tr>
-			<td>
-				<div><label>USERNAME:</label><input type="text" id="username" ></input></div>
-				<div><label>PASSWORD:</label><input type="password" id="pwd" ></input></div>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<div class="div-title" >get User Info</div>
-				<div id="getUserInfo_result" class="div-result" ></div>
-				<input type="button" id="getUserInfo" class="input-button" value="getUserInfo"></input>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<div class="div-title" >getFolder Info or Contents</div>
-				<div id="getFolder_result" class="div-result" ></div>
-				<input type="button" id="getFolderInfo" class="input-button" value="getFolderInfo (magic briefcase)" disabled></input>
-				<input type="button" id="getFolderContents" class="input-button" value="getFolderContents (magic briefcase)" disabled></input>
-			</td>
-		</tr>
-	</table>
+	<div id="title">jQuery <a href="https://www.sugarsync.com/" >SugarSync</a> v0.0.3</div>
+	<div class="container credentials-container" >
+		<div class="contained" >
+			<div><label>USERNAME:</label><input type="text" id="username" value="" ></input></div>
+			<div><label>PASSWORD:</label><input type="password" id="pwd" value="" ></input></div>
+			<div class="input-container" >
+				<div class="input-button" ><input type="button" id="getUserInfo" value="Login"></input></div>
+				<div class="input-button" ><input type="button" id="getFolderInfo" value="getFolderInfo (magic briefcase)" disabled></input></div>
+				<div class="input-button" ><input type="button" id="getFolderContents" value="getFolderContents (magic briefcase)" disabled></input></div>
+				<div class="input-button" ><input type="button" id="createFile" value="Create File" disabled></input></div>
+			</div>
+		</div>
+	</div>
+	<div id="getUserInfo" class="container getuserinfo-container" >
+		<div class="contained" >
+			<div id="getUserInfo_result" class="div-result" ></div>
+			<div class="div-title" >get User Info</div>
+		</div>
+	</div>
+	<div id="getFolderInfo" class="container getfolderinfo-container" >
+		<div class="contained" >
+			<div class="div-title" >getFolder Info or Contents</div>
+			<div id="getFolder_result" class="div-result" ></div>
+		</div>
+	</div>
+	<div id="getFileVersionInfo" class="container getfileversioninfo-container" >
+		<div class="contained" >
+			<div class="div-title" ></div>
+			<div id="getFileVersion_result" class="div-result" ></div>
+		</div>
+	</div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-jQuery SugarSync v0.0.2
+jQuery SugarSync v0.0.3
 =================
 "jQuery SugarSync" is a jQuery Plugin to add SugarSync functionality (https://www.sugarsync.com/) to the jQuery Library (http://jquery.com/).
 
@@ -134,7 +134,37 @@ $(selector).sugarsync('getFolderContents', sFolderResource, fCallback, oOptions)
 			- `last_modified` sort by the last-modified date (if available) of the items
 			- `size` sort by the size (in bytes) of the items
 			- `extension` sort by the filename extension (if available) of the items
-		
+
+```javascript
+$(selector).sugarsync('download', sFileResource, sDisplayName, sMediatype, fCallback );
+```
+
++ `sFileResource`
+    The string describing a file resource
++ `sDisplayName`
+    The string describing a the filename to use while saving the file
++ `sMediatype` `{String: null}`
+    The string describing a file's media type
++ `fCallback`
+    The callback function receiving a JavaScript array describing the downloaded file with the following parameters:
+	* `displayName` the label
+	* `mediaType` the file media type
+
+```javascript
+$(selector).sugarsync('getVersionHistory', sFileResource, fCallback );
+```
+
++ `sFileResource`
+    The string describing a file resource
++ `fCallback`
+    The callback function receiving a JavaScript array describing the folder contents as first parameter. Each element of the array is a JavaScript object with the following parameters:
+	* `fileData` the file data resource
+	* `lastModified` the last time the file was modified
+	* `mediaType` the file media type
+	* `presentOnServer` a flag which shows if the file is present on the server
+	* `ref` the file resource
+	* `size` the file size
+
 Notes
 -----
 
@@ -142,12 +172,19 @@ Improvements
 -----
 A lot of enhancement can be done on this library.
 Right now I am planning to add as soon as possible:
-- File Creation
+- Create file
 - Upload Data operation to create a file or a folder
-- Download file operation
+- Improve download file operation: still unable to download correctly files with media type different form common text
+- Improve "test.html" demo page usability
 
 Change Log
 ----------
+ * __0.0.3__
+  - Update to use correctly jQuery 2.0.0+ library
+  - Download files using HTML5 specifics
+  - Added Version History request
+  - Revisited "test.html" demo page
+  
  * __0.0.2__
   - Updated "getFolderContents" method to return an array of objects where the type property determine if it's a folder or a file
   - Added options to "getFolderContents" method
